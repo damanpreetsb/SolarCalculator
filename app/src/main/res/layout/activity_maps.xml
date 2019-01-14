@@ -123,6 +123,7 @@
             android:layout_height="40dp"
             android:layout_above="@id/view"
             android:scaleType="centerCrop"
+            android:transitionName="pin"
             android:layout_centerHorizontal="true"
             app:srcCompat="@drawable/ic_pin"/>
 

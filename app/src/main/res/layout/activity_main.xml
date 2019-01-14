@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -7,14 +7,44 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
-    <TextView
-            android:id="@+id/demoText"
+    <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hello World!"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            android:text="@string/app_name"
+            android:textSize="26sp"
+            android:textColor="@android:color/black"
+            android:layout_marginTop="80dp"
+            android:layout_centerHorizontal="true"
+            app:fontFamily="@font/paytone_one"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <View
+            android:id="@+id/view"
+            android:layout_width="40dp"
+            android:layout_height="1dp"
+            android:background="@android:color/black"
+            android:alpha="0.4"
+            android:layout_centerInParent="true"/>
+
+    <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/pinImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_above="@id/view"
+            android:scaleType="centerCrop"
+            android:layout_centerHorizontal="true"
+            android:transitionName="pin"
+            app:srcCompat="@drawable/ic_pin"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Getting your location..."
+            android:textSize="16sp"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="40dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            app:fontFamily="@font/poppins"/>
+
+</RelativeLayout>

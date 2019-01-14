@@ -1,18 +1,28 @@
 package com.daman.solarcalculator
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.daman.solarcalculator.calculator.SunCalc
 import com.daman.solarcalculator.calculator.models.SunPhase
 import com.daman.solarcalculator.data.AppDatabase
 import com.daman.solarcalculator.data.DbWorkerThread
 import com.daman.solarcalculator.data.entities.UserLocations
+import com.daman.solarcalculator.util.toast
+import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.places.ui.PlaceAutocomplete
@@ -41,24 +51,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private var locality: String = ""
 
     private val AUTOCOMPLETE_REQ_CODE = 1
+    private val FAVORITE_REQ_CODE = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
+
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        configureCameraIdle()
-        init()
     }
 
     private fun configureCameraIdle() {
         onCameraIdleListener = GoogleMap.OnCameraIdleListener {
             latLng = mMap.cameraPosition.target
-
-            sunriseSunsetTime(calendar, latLng)
+            setCameraToLocation(latLng)
             val geocoder = Geocoder(this@MapsActivity)
-
             try {
                 val addressList = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
                 if (addressList != null && addressList.size > 0) {
@@ -78,10 +85,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        mMap.setOnCameraIdleListener(onCameraIdleListener)
+        init()
     }
 
+    @SuppressLint("MissingPermission")
     private fun init() {
+        configureCameraIdle()
+        mMap.setOnCameraIdleListener(onCameraIdleListener)
+        mMap.isMyLocationEnabled = true
+
         mDbWorkerThread.start()
 
         getMyLocation()
@@ -131,24 +143,39 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         favoriteListImageview.setOnClickListener {
-            FavoritesActivity.start(this)
+            val intent = Intent(this, FavoritesActivity::class.java)
+            startActivityForResult(intent, FAVORITE_REQ_CODE)
         }
     }
 
+    @SuppressLint("MissingPermission")
     private fun getMyLocation() {
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         fusedLocationClient.lastLocation
-            .addOnSuccessListener { location : Location? ->
-                latLng = LatLng(location?.latitude ?: -34.0, location?.longitude ?: 151.0)
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng))
-                mMap.moveCamera(CameraUpdateFactory.zoomTo(15F))
-                mMap.isMyLocationEnabled = true
+            .addOnSuccessListener { location: Location? ->
+                if (location != null) {
+                    latLng = LatLng(location.latitude, location.longitude)
+                    setCameraToLocation(latLng)
+                } else {
+                    fusedLocationClient.lastLocation
+                        .addOnSuccessListener { location: Location? ->
+                            latLng = LatLng(location?.latitude ?: -34.0, location?.longitude ?: 151.0)
+                            setCameraToLocation(latLng)
+                        }
+                }
             }
+    }
+
+    private fun setCameraToLocation(latLng: LatLng) {
+        val location = CameraUpdateFactory.newLatLngZoom(latLng, 15F)
+        mMap.animateCamera(location)
+        sunriseSunsetTime(calendar, latLng)
     }
 
     private fun sunriseSunsetTime(calendar: Calendar, location: LatLng) {
         val list = SunCalc.getPhases(calendar, location.latitude, location.longitude)
         for (phase in list) {
-            when(phase.name) {
+            when (phase.name) {
                 SunPhase.Name.SUNRISE -> {
                     val startDate = phase.startDate
                     val endDate = phase.endDate
@@ -171,7 +198,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun setDate(calendar: Calendar){
+    private fun setDate(calendar: Calendar) {
         val sdf = SimpleDateFormat("EEEE, MMM dd, YYY", Locale.getDefault())
         val date = sdf.format(calendar.time)
         selectedDateTextView.text = date
@@ -200,14 +227,29 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == AUTOCOMPLETE_REQ_CODE) {
-            if (resultCode == RESULT_OK) {
-                val place = PlaceAutocomplete.getPlace(this, data)
-                latLng = place.latLng
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng))
-                mMap.moveCamera(CameraUpdateFactory.zoomTo(15F))
-                sunriseSunsetTime(calendar, latLng)
+        when (requestCode) {
+            AUTOCOMPLETE_REQ_CODE -> {
+                if (resultCode == RESULT_OK) {
+                    val place = PlaceAutocomplete.getPlace(this, data)
+                    latLng = place.latLng
+                    setCameraToLocation(latLng)
+                }
+            }
+            FAVORITE_REQ_CODE -> {
+                if (resultCode == RESULT_OK) {
+                    val userLocation = data?.getParcelableExtra<UserLocations>(FavoritesActivity.USER_LOCATION_CLICKED)
+                    if (userLocation != null) {
+                        val latLng = LatLng(userLocation.latitude, userLocation.longitude)
+                        setCameraToLocation(latLng)
+                    } else {
+                        "Location not found!".toast(this@MapsActivity)
+                    }
+                }
             }
         }
+    }
+
+    override fun onBackPressed() {
+        finish()
     }
 }
