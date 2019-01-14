@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent" android:layout_height="match_parent">
 
     <fragment
             android:layout_width="match_parent"
@@ -10,128 +10,282 @@
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"/>
 
+    <com.google.android.material.card.MaterialCardView
+            android:id="@+id/searchCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            app:cardCornerRadius="4dp">
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical"
+                    app:srcCompat="@drawable/ic_search"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Search"
+                    android:textSize="18sp"
+                    android:textColor="@android:color/black"
+                    android:layout_marginStart="16dp"
+                    android:layout_gravity="center"
+                    android:gravity="center_vertical"
+                    android:background="@android:color/transparent"
+                    android:includeFontPadding="false"
+                    app:fontFamily="@font/poppins_medium"/>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/favoriteListImageview"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    app:srcCompat="@drawable/ic_bookmark"/>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+            android:id="@+id/locationCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_below="@id/searchCard"
+            app:cardCornerRadius="4dp">
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/locationNameTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/black"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:background="@android:color/transparent"
+                    android:includeFontPadding="false"
+                    app:fontFamily="@font/poppins"/>
+
+            <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/favoriteLocationImageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:checked="false"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:button="@drawable/ic_favorite_selector"
+            />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimaryDark"
+            android:layout_centerInParent="true"
+            android:layout_below="@id/locationCard"
+            android:layout_above="@id/pinImageView"/>
+
     <View
             android:id="@+id/view"
             android:layout_width="1dp"
             android:layout_height="1dp"
             android:layout_centerInParent="true"/>
 
-    <ImageView
-            android:layout_width="10dp"
-            android:layout_height="30dp"
-            android:scaleType="fitXY"
+    <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/pinImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
             android:layout_above="@id/view"
+            android:scaleType="centerCrop"
             android:layout_centerHorizontal="true"
-            android:src="@mipmap/ic_launcher"/>
+            app:srcCompat="@drawable/ic_pin"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/targetFAB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/bottomCard"
+            android:layout_margin="16dp"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_arm_target"
+            app:fabSize="mini"
+            app:backgroundTint="@android:color/white"/>
 
     <com.google.android.material.card.MaterialCardView
+            android:id="@+id/bottomCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true">
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="-16dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:contentPaddingBottom="16dp"
+            app:cardCornerRadius="16dp">
 
-        <LinearLayout
+        <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="wrap_content">
 
             <LinearLayout
+                    android:id="@+id/sunLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical">
 
-                <ImageView
-                        android:layout_width="wrap_content"
+                <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:src="@mipmap/ic_launcher"/>
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
 
-                <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/sunRiseStartTextView"
-                        android:layout_width="wrap_content"
+                    <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="10dp"
+                            android:src="@drawable/ic_sunrise"/>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/sunRiseStartTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="6pm"
+                            android:textSize="14sp"
+                            android:textColor="@android:color/black"
+                            app:fontFamily="@font/poppins_medium"/>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/sunRiseEndTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="4dp"
+                            android:text="6pm"
+                            android:textSize="14sp"
+                            android:textColor="@android:color/black"
+                            app:fontFamily="@font/poppins_medium"/>
+
+                </LinearLayout>
+
+                <View
+                        android:layout_width="0.5dp"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/black"/>
+
+                <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:text="6pm"
-                        android:textSize="18sp"/>
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
 
-                <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/sunRiseEndTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:text="6pm"
-                        android:textSize="18sp"/>
+                    <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="10dp"
+                            android:src="@drawable/ic_sunset"/>
 
+                    <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/sunSetStartTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="6pm"
+                            android:textSize="14sp"
+                            android:textColor="@android:color/black"
+                            app:fontFamily="@font/poppins_medium"/>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/sunSetEndTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="4dp"
+                            android:text="6pm"
+                            android:textSize="14sp"
+                            android:textColor="@android:color/black"
+                            app:fontFamily="@font/poppins_medium"/>
+
+                </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout
+            <View
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@mipmap/ic_launcher"/>
-
-                <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/sunSetStartTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:text="6pm"
-                        android:textSize="18sp"/>
-
-                <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/sunSetEndTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:text="6pm"
-                        android:textSize="18sp"/>
-
-            </LinearLayout>
+                    android:layout_height="0.5dp"
+                    android:layout_above="@id/selectedDateTextView"
+                    android:background="@android:color/black"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/selectedDateTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:layout_centerInParent="true"
                     android:text="6pm"
-                    android:textSize="18sp"/>
+                    android:layout_below="@+id/sunLayout"
+                    android:textSize="16sp"
+                    android:textColor="@android:color/black"
+                    app:fontFamily="@font/poppins"/>
 
             <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    android:layout_marginBottom="4dp"
+                    android:layout_below="@+id/selectedDateTextView"
                     android:gravity="center">
 
                 <ImageView
                         android:id="@+id/previousDayIcon"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_margin="10dp"
-                        android:src="@mipmap/ic_launcher"/>
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/ic_skip_previous"/>
 
                 <ImageView
                         android:id="@+id/currentDayIcon"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_margin="10dp"
-                        android:src="@mipmap/ic_launcher"/>
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/ic_play_arrow"/>
 
                 <ImageView
                         android:id="@+id/nextDayIcon"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_margin="10dp"
-                        android:src="@mipmap/ic_launcher"/>
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/ic_skip_next"/>
 
 
             </LinearLayout>
 
-        </LinearLayout>
+        </RelativeLayout>
 
     </com.google.android.material.card.MaterialCardView>
 
