@@ -39,7 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Getting your location..."
+            android:text="@string/getting_your_location"
             android:textSize="16sp"
             android:textColor="@android:color/black"
             android:layout_marginBottom="40dp"
